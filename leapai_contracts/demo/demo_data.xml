@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<data>
+
+    <!-- ── Tenders ───────────────────────────────────────────────────────────── -->
+    <record id="tender_substation_riyadh" model="contract.tender">
+        <field name="name">Supply and Installation of 132kV Substation — Riyadh North</field>
+        <field name="reference">TND-2025-0001</field>
+        <field name="tender_type">open</field>
+        <field name="region">riyadh</field>
+        <field name="site_location">North Riyadh, King Fahd Road</field>
+        <field name="estimated_value">18500000</field>
+        <field name="publish_date">2025-01-15</field>
+        <field name="closing_date">2025-02-28 17:00:00</field>
+        <field name="bid_bond_percentage">2.0</field>
+        <field name="performance_bond_percentage">10.0</field>
+        <field name="advance_percentage">10.0</field>
+        <field name="retention_percentage">10.0</field>
+        <field name="nitaqat_required">True</field>
+        <field name="state">awarded</field>
+        <field name="award_date">2025-03-20</field>
+        <field name="scope_of_work">Supply, installation, testing and commissioning of 132/33kV substation including transformers, switchgear, protection systems, civil works, and all associated infrastructure.</field>
+    </record>
+
+    <record id="tender_cable_western" model="contract.tender">
+        <field name="name">Underground HV Cable Route — Jeddah Industrial City</field>
+        <field name="reference">TND-2025-0002</field>
+        <field name="tender_type">limited</field>
+        <field name="region">western</field>
+        <field name="site_location">Jeddah Industrial City Phase 3</field>
+        <field name="estimated_value">7200000</field>
+        <field name="publish_date">2025-02-01</field>
+        <field name="closing_date">2025-03-15 17:00:00</field>
+        <field name="bid_bond_percentage">2.0</field>
+        <field name="performance_bond_percentage">10.0</field>
+        <field name="advance_percentage">15.0</field>
+        <field name="retention_percentage">10.0</field>
+        <field name="state">evaluation</field>
+        <field name="scope_of_work">Design, supply and installation of 22kV underground cable network including cable laying, joint bays, termination chambers, SCADA integration.</field>
+    </record>
+
+    <record id="tender_metering_eastern" model="contract.tender">
+        <field name="name">Smart Metering Infrastructure — Eastern Province</field>
+        <field name="reference">TND-2025-0003</field>
+        <field name="tender_type">open</field>
+        <field name="region">eastern</field>
+        <field name="site_location">Eastern Province — Dammam, Khobar, Dhahran</field>
+        <field name="estimated_value">45000000</field>
+        <field name="publish_date">2025-03-01</field>
+        <field name="closing_date">2025-04-30 17:00:00</field>
+        <field name="bid_bond_percentage">2.0</field>
+        <field name="performance_bond_percentage">10.0</field>
+        <field name="advance_percentage">10.0</field>
+        <field name="retention_percentage">10.0</field>
+        <field name="state">published</field>
+        <field name="scope_of_work">Supply and installation of 150,000 smart meters with AMI communication infrastructure, data management system, and integration with billing systems.</field>
+    </record>
+
+    <!-- ── Contracts ─────────────────────────────────────────────────────────── -->
+    <record id="contract_substation_riyadh" model="contract.contract">
+        <field name="name">Supply and Installation of 132kV Substation — Riyadh North</field>
+        <field name="reference">CON-2025-0001</field>
+        <field name="tender_id" ref="tender_substation_riyadh"/>
+        <field name="contract_type">lump_sum</field>
+        <field name="partner_id" ref="base.res_partner_2"/>
+        <field name="partner_cr">1234567890</field>
+        <field name="partner_vat">300012345600003</field>
+        <field name="partner_iban">SA0380000000608010167519</field>
+        <field name="partner_bank">Al Rajhi Bank</field>
+        <field name="region">riyadh</field>
+        <field name="site_location">North Riyadh, King Fahd Road</field>
+        <field name="date_signed">2025-04-01</field>
+        <field name="start_date">2025-04-15</field>
+        <field name="end_date">2026-10-14</field>
+        <field name="contract_value">17800000</field>
+        <field name="advance_percentage">10.0</field>
+        <field name="retention_percentage">10.0</field>
+        <field name="state">active</field>
+        <field name="description">18-month EPC contract for 132/33kV substation in North Riyadh. Includes all civil, electrical, and mechanical works.</field>
+    </record>
+
+    <record id="contract_maintenance_western" model="contract.contract">
+        <field name="name">Preventive Maintenance of Distribution Network — Western Region</field>
+        <field name="reference">CON-2024-0042</field>
+        <field name="contract_type">unit_rate</field>
+        <field name="partner_id" ref="base.res_partner_3"/>
+        <field name="partner_cr">9876543210</field>
+        <field name="region">western</field>
+        <field name="site_location">Western Region — Jeddah</field>
+        <field name="date_signed">2024-01-01</field>
+        <field name="start_date">2024-01-15</field>
+        <field name="end_date">2025-01-14</field>
+        <field name="contract_value">3600000</field>
+        <field name="advance_percentage">10.0</field>
+        <field name="retention_percentage">10.0</field>
+        <field name="state">completed</field>
+        <field name="description">Annual preventive maintenance contract for distribution transformers and switching equipment in Jeddah area.</field>
+    </record>
+
+    <!-- ── Amendments ────────────────────────────────────────────────────────── -->
+    <record id="amendment_001" model="contract.amendment">
+        <field name="reference">AMD-2025-0001</field>
+        <field name="name">Time Extension — Site Access Delays</field>
+        <field name="contract_id" ref="contract_substation_riyadh"/>
+        <field name="amendment_type">time</field>
+        <field name="time_extension_days">45</field>
+        <field name="date_submitted">2025-07-01</field>
+        <field name="reason">Delay in obtaining municipal permits for road crossings. Contractor submitted formal claim supported by correspondence with municipality.</field>
+        <field name="state">submitted</field>
+    </record>
+
+    <!-- ── Payment Certificates ───────────────────────────────────────────────── -->
+    <record id="ipc_001" model="contract.payment.certificate">
+        <field name="name">IPC-2025-0001</field>
+        <field name="contract_id" ref="contract_substation_riyadh"/>
+        <field name="certificate_type">interim</field>
+        <field name="period_from">2025-04-15</field>
+        <field name="period_to">2025-05-31</field>
+        <field name="total_work_done_to_date">2100000</field>
+        <field name="previous_certified_amount">0</field>
+        <field name="advance_recovery">178000</field>
+        <field name="state">paid</field>
+        <field name="date_submitted">2025-06-05</field>
+        <field name="date_approved">2025-06-15</field>
+        <field name="date_paid">2025-06-25</field>
+    </record>
+
+    <record id="ipc_002" model="contract.payment.certificate">
+        <field name="name">IPC-2025-0002</field>
+        <field name="contract_id" ref="contract_substation_riyadh"/>
+        <field name="certificate_type">interim</field>
+        <field name="period_from">2025-06-01</field>
+        <field name="period_to">2025-06-30</field>
+        <field name="total_work_done_to_date">3950000</field>
+        <field name="previous_certified_amount">2100000</field>
+        <field name="advance_recovery">185000</field>
+        <field name="state">approved</field>
+        <field name="date_submitted">2025-07-05</field>
+        <field name="date_approved">2025-07-15</field>
+    </record>
+
+    <record id="ipc_003" model="contract.payment.certificate">
+        <field name="name">IPC-2025-0003</field>
+        <field name="contract_id" ref="contract_substation_riyadh"/>
+        <field name="certificate_type">interim</field>
+        <field name="period_from">2025-07-01</field>
+        <field name="period_to">2025-07-31</field>
+        <field name="total_work_done_to_date">5800000</field>
+        <field name="previous_certified_amount">3950000</field>
+        <field name="advance_recovery">185000</field>
+        <field name="state">draft</field>
+    </record>
+
+    <!-- ── Bank Guarantees ───────────────────────────────────────────────────── -->
+    <record id="guarantee_performance_001" model="contract.guarantee">
+        <field name="name">PB-2025-ARB-001247</field>
+        <field name="contract_id" ref="contract_substation_riyadh"/>
+        <field name="guarantee_type">performance</field>
+        <field name="bank_name">Al Rajhi Bank — مصرف الراجحي</field>
+        <field name="bank_reference">ARB-LG-2025-001247</field>
+        <field name="beneficiary">Saudi Electricity Company — شركة الكهرباء السعودية</field>
+        <field name="amount">1780000</field>
+        <field name="issue_date">2025-04-01</field>
+        <field name="expiry_date">2027-04-30</field>
+        <field name="state">active</field>
+    </record>
+
+    <record id="guarantee_advance_001" model="contract.guarantee">
+        <field name="name">APG-2025-SAB-003891</field>
+        <field name="contract_id" ref="contract_substation_riyadh"/>
+        <field name="guarantee_type">advance</field>
+        <field name="bank_name">Saudi British Bank (SABB) — البنك السعودي البريطاني</field>
+        <field name="bank_reference">SABB-LG-2025-003891</field>
+        <field name="beneficiary">Saudi Electricity Company — شركة الكهرباء السعودية</field>
+        <field name="amount">1780000</field>
+        <field name="issue_date">2025-04-01</field>
+        <field name="expiry_date">2025-10-31</field>
+        <field name="state">active</field>
+        <field name="notes">Advance payment guarantee equal to 10% of contract value. To be reduced proportionally as advance is recovered from interim payment certificates.</field>
+    </record>
+
+    <record id="guarantee_maintenance_old" model="contract.guarantee">
+        <field name="name">MB-2024-NCB-007732</field>
+        <field name="contract_id" ref="contract_maintenance_western"/>
+        <field name="guarantee_type">retention</field>
+        <field name="bank_name">National Commercial Bank (NCB) — البنك الأهلي</field>
+        <field name="bank_reference">NCB-LG-2024-007732</field>
+        <field name="beneficiary">Saudi Electricity Company — شركة الكهرباء السعودية</field>
+        <field name="amount">360000</field>
+        <field name="issue_date">2024-01-01</field>
+        <field name="expiry_date">2025-07-14</field>
+        <field name="state">released</field>
+        <field name="release_date">2025-07-15</field>
+    </record>
+
+</data>
+</odoo>

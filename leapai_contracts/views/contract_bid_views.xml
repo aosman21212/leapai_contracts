@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ── Form ─────────────────────────────────────────────────────────────── -->
+    <record id="view_contract_bid_form" model="ir.ui.view">
+        <field name="name">contract.bid.form</field>
+        <field name="model">contract.bid</field>
+        <field name="arch" type="xml">
+            <form string="Bid — عطاء">
+                <header>
+                    <button name="action_review"      string="Start Review — مراجعة"  type="object" class="btn-primary"
+                            invisible="state != 'submitted'"/>
+                    <button name="action_accept"      string="Accept — قبول"          type="object" class="btn-success"
+                            invisible="state not in ('submitted','under_review')"/>
+                    <button name="action_mark_winner" string="Mark as Winner — الفائز" type="object" class="btn-primary"
+                            invisible="state != 'accepted' or is_winner"/>
+                    <button name="action_reject"      string="Reject — رفض"           type="object" class="btn-danger"
+                            invisible="state in ('rejected','accepted')"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="submitted,under_review,accepted"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name" readonly="1"/></h1>
+                        <div class="o_row" invisible="not is_winner">
+                            <span class="badge rounded-pill text-bg-success fs-6">🏆 Winner — الفائز</span>
+                        </div>
+                    </div>
+                    <group>
+                        <group string="Bid Information — معلومات العطاء">
+                            <field name="tender_id"/>
+                            <field name="partner_id"/>
+                            <field name="submission_date"/>
+                        </group>
+                        <group string="Bidder Details — بيانات المتقدم">
+                            <field name="cr_number"/>
+                            <field name="vat_number"/>
+                            <field name="nitaqat_color"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Financial — المالي">
+                            <field name="currency_id" invisible="1"/>
+                            <field name="bid_value"/>
+                            <field name="vat_amount"/>
+                            <field name="total_with_vat"/>
+                        </group>
+                        <group string="Bid Bond — الضمان الابتدائي">
+                            <field name="bid_bond_submitted"/>
+                            <field name="bid_bond_reference" invisible="not bid_bond_submitted"/>
+                            <field name="bid_bond_amount"    invisible="not bid_bond_submitted"/>
+                            <field name="bid_bond_expiry"    invisible="not bid_bond_submitted"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Evaluation — التقييم">
+                            <group>
+                                <group string="Weights — الأوزان">
+                                    <field name="technical_weight"/>
+                                    <field name="financial_weight"/>
+                                </group>
+                                <group string="Scores — الدرجات">
+                                    <field name="technical_score"/>
+                                    <field name="financial_score"/>
+                                    <field name="total_score" readonly="1"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Notes — ملاحظات">
+                            <field name="disqualification_reason"
+                                   placeholder="Disqualification reason if rejected — سبب الاستبعاد إن وجد"
+                                   invisible="state != 'rejected'"/>
+                            <field name="notes" placeholder="Notes — ملاحظات"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- ── List ─────────────────────────────────────────────────────────────── -->
+    <record id="view_contract_bid_list" model="ir.ui.view">
+        <field name="name">contract.bid.list</field>
+        <field name="model">contract.bid</field>
+        <field name="arch" type="xml">
+            <list string="Bids — العطاءات"
+                  decoration-success="is_winner == True"
+                  decoration-danger="state == 'rejected'"
+                  decoration-info="state == 'under_review'">
+                <field name="name"/>
+                <field name="tender_id"/>
+                <field name="partner_id"/>
+                <field name="bid_value"/>
+                <field name="currency_id" column_invisible="1"/>
+                <field name="total_with_vat"/>
+                <field name="technical_score"/>
+                <field name="financial_score"/>
+                <field name="total_score"/>
+                <field name="is_winner" widget="boolean_toggle"/>
+                <field name="submission_date"/>
+                <field name="state" widget="badge"
+                       decoration-info="state == 'under_review'"
+                       decoration-success="state == 'accepted'"
+                       decoration-danger="state == 'rejected'"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ── Search ───────────────────────────────────────────────────────────── -->
+    <record id="view_contract_bid_search" model="ir.ui.view">
+        <field name="name">contract.bid.search</field>
+        <field name="model">contract.bid</field>
+        <field name="arch" type="xml">
+            <search string="Search Bids — البحث في العطاءات">
+                <field name="name" string="Bid No."/>
+                <field name="partner_id" string="Bidder — المتقدم"/>
+                <field name="tender_id" string="Tender — المناقصة"/>
+                <separator/>
+                <filter string="Winners — الفائزون"     name="winners"  domain="[('is_winner','=',True)]"/>
+                <filter string="Accepted — مقبول"      name="accepted" domain="[('state','=','accepted')]"/>
+                <filter string="Under Review — مراجعة" name="review"   domain="[('state','=','under_review')]"/>
+                <filter string="Rejected — مرفوض"      name="rejected" domain="[('state','=','rejected')]"/>
+                <group name="group_by">
+                    <filter string="Tender"  name="by_tender" context="{'group_by': 'tender_id'}"/>
+                    <filter string="Status"  name="by_state"  context="{'group_by': 'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- ── Action ───────────────────────────────────────────────────────────── -->
+    <record id="action_contract_bid" model="ir.actions.act_window">
+        <field name="name">Bids — العطاءات</field>
+        <field name="res_model">contract.bid</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_contract_bid_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No bids yet — لا توجد عطاءات بعد
+            </p>
+        </field>
+    </record>
+
+</odoo>

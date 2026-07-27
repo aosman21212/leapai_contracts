@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ── Form ─────────────────────────────────────────────────────────────── -->
+    <record id="view_contract_payment_certificate_form" model="ir.ui.view">
+        <field name="name">contract.payment.certificate.form</field>
+        <field name="model">contract.payment.certificate</field>
+        <field name="arch" type="xml">
+            <form string="Payment Certificate — شهادة الدفع">
+                <header>
+                    <button name="action_submit"     string="Submit — تقديم"        type="object" class="btn-primary"
+                            invisible="state != 'draft'"/>
+                    <button name="action_approve"    string="Approve — اعتماد"      type="object" class="btn-success"
+                            invisible="state != 'submitted'"
+                            groups="leapai_contracts.group_contracts_manager"/>
+                    <button name="action_mark_paid"  string="Mark Paid — تم الدفع"  type="object" class="btn-primary"
+                            invisible="state != 'approved'"
+                            groups="leapai_contracts.group_contracts_manager"/>
+                    <button name="action_reject"     string="Reject — رفض"          type="object" class="btn-danger"
+                            invisible="state != 'submitted'"
+                            groups="leapai_contracts.group_contracts_manager"/>
+                    <button name="action_reset_draft" string="Reset Draft"           type="object"
+                            invisible="state == 'draft'"
+                            groups="leapai_contracts.group_contracts_manager"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,submitted,approved,paid"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name" readonly="1"/></h1>
+                        <h2>
+                            <field name="certificate_type"/>
+                        </h2>
+                    </div>
+                    <group>
+                        <group string="Certificate Info — معلومات الشهادة">
+                            <field name="contract_id"/>
+                            <field name="period_from"/>
+                            <field name="period_to"/>
+                        </group>
+                        <group string="Prepared By — إعداد">
+                            <field name="prepared_by"/>
+                            <field name="checked_by"/>
+                            <field name="approved_by" readonly="1"/>
+                            <field name="date_submitted" readonly="1"/>
+                            <field name="date_approved" readonly="1"/>
+                            <field name="date_paid" readonly="1"/>
+                        </group>
+                    </group>
+
+                    <!-- Financial Summary Card -->
+                    <group string="Payment Calculation — حساب الدفعة">
+                        <group string="Work Done — الأعمال المنجزة">
+                            <field name="currency_id" invisible="1"/>
+                            <field name="contract_value" readonly="1"/>
+                            <field name="total_work_done_to_date"/>
+                            <field name="previous_certified_amount"/>
+                            <field name="this_period_gross" readonly="1"/>
+                        </group>
+                        <group string="Deductions — الخصومات">
+                            <field name="retention_percentage" readonly="1"/>
+                            <field name="retention_deduction" readonly="1"/>
+                            <field name="advance_recovery"/>
+                            <field name="other_deductions"/>
+                            <field name="other_deductions_note"
+                                   invisible="not other_deductions"/>
+                            <field name="total_deductions" readonly="1"/>
+                        </group>
+                    </group>
+                    <group string="Net Payable — المبلغ المستحق">
+                        <group>
+                            <field name="net_before_vat" readonly="1"/>
+                            <field name="vat_amount"     readonly="1"/>
+                            <field name="net_payable"    readonly="1"/>
+                        </group>
+                    </group>
+
+                    <notebook>
+                        <page string="BOQ Lines — بنود الكميات">
+                            <field name="line_ids">
+                                <list editable="bottom">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="item_no"/>
+                                    <field name="description"/>
+                                    <field name="uom"/>
+                                    <field name="boq_quantity"/>
+                                    <field name="unit_rate"/>
+                                    <field name="boq_amount" readonly="1"/>
+                                    <field name="previous_quantity"/>
+                                    <field name="previous_amount" readonly="1"/>
+                                    <field name="this_period_quantity"/>
+                                    <field name="this_period_amount" readonly="1"/>
+                                    <field name="cumulative_quantity" readonly="1"/>
+                                    <field name="currency_id" column_invisible="1"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Notes — ملاحظات">
+                            <field name="notes" placeholder="Notes and remarks — ملاحظات"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- ── List ─────────────────────────────────────────────────────────────── -->
+    <record id="view_contract_payment_certificate_list" model="ir.ui.view">
+        <field name="name">contract.payment.certificate.list</field>
+        <field name="model">contract.payment.certificate</field>
+        <field name="arch" type="xml">
+            <list string="Payment Certificates — شهادات الدفع"
+                  decoration-success="state == 'paid'"
+                  decoration-info="state == 'approved'"
+                  decoration-warning="state == 'submitted'"
+                  decoration-danger="state == 'rejected'">
+                <field name="name"/>
+                <field name="contract_id"/>
+                <field name="certificate_type"/>
+                <field name="period_from"/>
+                <field name="period_to"/>
+                <field name="this_period_gross"/>
+                <field name="total_deductions"/>
+                <field name="net_payable"/>
+                <field name="currency_id" column_invisible="1"/>
+                <field name="date_submitted"/>
+                <field name="date_paid"/>
+                <field name="state" widget="badge"
+                       decoration-warning="state == 'submitted'"
+                       decoration-info="state == 'approved'"
+                       decoration-success="state == 'paid'"
+                       decoration-danger="state == 'rejected'"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ── Search ───────────────────────────────────────────────────────────── -->
+    <record id="view_contract_payment_certificate_search" model="ir.ui.view">
+        <field name="name">contract.payment.certificate.search</field>
+        <field name="model">contract.payment.certificate</field>
+        <field name="arch" type="xml">
+            <search string="Search Certificates — البحث في الشهادات">
+                <field name="name"/>
+                <field name="contract_id"/>
+                <separator/>
+                <filter string="Draft — مسودة"           name="draft"     domain="[('state','=','draft')]"/>
+                <filter string="Submitted — مقدّم"       name="submitted" domain="[('state','=','submitted')]"/>
+                <filter string="Approved — معتمد"        name="approved"  domain="[('state','=','approved')]"/>
+                <filter string="Paid — مدفوع"            name="paid"      domain="[('state','=','paid')]"/>
+                <separator/>
+                <filter string="Interim — مرحلي"         name="interim"   domain="[('certificate_type','=','interim')]"/>
+                <filter string="Final — نهائي"           name="final"     domain="[('certificate_type','=','final')]"/>
+                <group name="group_by">
+                    <filter string="Contract" name="by_contract" context="{'group_by': 'contract_id'}"/>
+                    <filter string="Type"     name="by_type"     context="{'group_by': 'certificate_type'}"/>
+                    <filter string="Status"   name="by_state"    context="{'group_by': 'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- ── Action ───────────────────────────────────────────────────────────── -->
+    <record id="action_contract_payment_certificate" model="ir.actions.act_window">
+        <field name="name">Payment Certificates — شهادات الدفع</field>
+        <field name="res_model">contract.payment.certificate</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_contract_payment_certificate_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No payment certificates yet — لا توجد شهادات دفع بعد
+            </p>
+        </field>
+    </record>
+
+</odoo>

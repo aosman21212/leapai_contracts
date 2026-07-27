@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>LeapAI Unified Contracts System</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: #2d2d2d;
+      background: #fff;
+      line-height: 1.6;
+    }
+
+    /* ── Hero ────────────────────────────────────────────────────────────── */
+    .hero {
+      background: linear-gradient(135deg, #0d47a1 0%, #1565c0 45%, #0288d1 100%);
+      color: #fff;
+      padding: 56px 40px 48px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M50 50c0-5.523 4.477-10 10-10s10 4.477 10 10-4.477 10-10 10c0 5.523-4.477 10-10 10s-10-4.477-10-10 4.477-10 10-10zM10 10c0-5.523 4.477-10 10-10s10 4.477 10 10-4.477 10-10 10c0 5.523-4.477 10-10 10S0 25.523 0 20s4.477-10 10-10z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    }
+    .hero-logo {
+      width: 96px;
+      height: 96px;
+      background: rgba(255,255,255,0.15);
+      border-radius: 22px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+      font-size: 48px;
+      backdrop-filter: blur(4px);
+      border: 2px solid rgba(255,255,255,0.3);
+    }
+    .hero h1 { font-size: 36px; font-weight: 800; letter-spacing: -0.5px; text-shadow: 0 2px 8px rgba(0,0,0,0.15); }
+    .hero h1 span { color: #b3e5fc; }
+    .hero .subtitle { margin-top: 10px; font-size: 18px; opacity: 0.9; font-weight: 400; }
+    .hero .arabic { margin-top: 6px; font-size: 16px; opacity: 0.75; direction: rtl; }
+    .badges { margin-top: 22px; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+    .badge {
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.3);
+      border-radius: 20px;
+      padding: 5px 16px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    /* ── Stats bar ───────────────────────────────────────────────────────── */
+    .stats {
+      background: #0d2137;
+      color: #fff;
+      display: flex;
+      justify-content: space-around;
+      padding: 22px 20px;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .stat { text-align: center; }
+    .stat-num { font-size: 28px; font-weight: 800; color: #29b6f6; }
+    .stat-lbl { font-size: 12px; opacity: 0.65; margin-top: 2px; text-transform: uppercase; letter-spacing: 0.5px; }
+
+    /* ── Section ─────────────────────────────────────────────────────────── */
+    .section { padding: 48px 40px; }
+    .section.alt { background: #f0f4ff; }
+    .section-title {
+      font-size: 26px;
+      font-weight: 800;
+      color: #0d47a1;
+      border-left: 5px solid #0288d1;
+      padding-left: 14px;
+      margin-bottom: 32px;
+    }
+    .section-title .ar {
+      font-size: 15px; color: #666; font-weight: 400;
+      direction: rtl; display: block; margin-top: 3px;
+    }
+
+    /* ── Feature grid ────────────────────────────────────────────────────── */
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 20px;
+    }
+    .feature-card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: 0 2px 12px rgba(13,71,161,0.08);
+      border: 1px solid #e8eef8;
+      transition: transform .2s, box-shadow .2s;
+    }
+    .feature-card:hover { transform: translateY(-3px); box-shadow: 0 6px 24px rgba(13,71,161,0.15); }
+    .feature-icon { font-size: 36px; margin-bottom: 12px; display: block; }
+    .feature-card h3 { font-size: 16px; font-weight: 700; color: #1a1a2e; margin-bottom: 8px; }
+    .feature-card p { font-size: 13.5px; color: #666; line-height: 1.55; }
+    .feature-card .ar-label { font-size: 12px; color: #0288d1; font-weight: 600; direction: rtl; margin-top: 6px; }
+
+    /* ── Pipeline ────────────────────────────────────────────────────────── */
+    .pipeline {
+      display: flex;
+      gap: 0;
+      align-items: stretch;
+      overflow-x: auto;
+      padding-bottom: 8px;
+    }
+    .pipe-step {
+      flex: 1;
+      min-width: 130px;
+      background: #fff;
+      border: 2px solid #e8eef8;
+      border-radius: 10px;
+      padding: 18px 14px;
+      text-align: center;
+      position: relative;
+    }
+    .pipe-step + .pipe-step { margin-left: 10px; }
+    .pipe-step::after {
+      content: '→';
+      position: absolute;
+      right: -18px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 20px;
+      color: #0288d1;
+      z-index: 1;
+    }
+    .pipe-step:last-child::after { display: none; }
+    .pipe-icon { font-size: 28px; display: block; margin-bottom: 8px; }
+    .pipe-label { font-size: 13px; font-weight: 700; color: #0d47a1; }
+    .pipe-sub { font-size: 11px; color: #888; margin-top: 3px; direction: rtl; }
+
+    /* ── Mockup section ──────────────────────────────────────────────────── */
+    .mockup-section {
+      padding: 48px 40px;
+      background: #0d2137;
+      color: #fff;
+    }
+    .mockup-section .section-title { color: #29b6f6; border-left-color: #0288d1; }
+    .mockup-section .section-title .ar { color: rgba(255,255,255,0.5); }
+    .mockup-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+      margin-top: 24px;
+    }
+    .mockup-card {
+      background: #fff;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    }
+    .mockup-bar {
+      background: #0d47a1;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      padding: 0 12px;
+      gap: 6px;
+    }
+    .mockup-dot { width: 10px; height: 10px; border-radius: 50%; }
+    .mockup-title-bar { color: rgba(255,255,255,0.9); font-size: 12px; margin-left: 8px; font-weight: 600; }
+    .mockup-body { padding: 16px; background: #fafbff; }
+    .mock-header {
+      background: #fff;
+      border-radius: 6px;
+      padding: 10px 14px;
+      margin-bottom: 12px;
+      border: 1px solid #e8eef8;
+    }
+    .mock-h1 { font-size: 18px; font-weight: 700; color: #0d47a1; }
+    .mock-sub { font-size: 11px; color: #888; margin-top: 2px; }
+    .mock-stat-row { display: flex; gap: 8px; margin-bottom: 12px; }
+    .mock-stat {
+      flex: 1;
+      background: #fff;
+      border-radius: 8px;
+      padding: 10px;
+      text-align: center;
+      border: 1px solid #e8eef8;
+    }
+    .mock-stat .n { font-size: 18px; font-weight: 800; color: #0d47a1; }
+    .mock-stat .l { font-size: 10px; color: #888; }
+    .mock-row {
+      background: #fff;
+      border-radius: 6px;
+      padding: 8px 12px;
+      margin-bottom: 6px;
+      border: 1px solid #f0f4ff;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .mock-badge { font-size: 10px; padding: 2px 8px; border-radius: 10px; font-weight: 600; }
+    .badge-active { background: #e8f5e9; color: #2e7d32; }
+    .badge-progress { background: #fff3e0; color: #e65c00; }
+    .badge-blue { background: #e3f2fd; color: #1565c0; }
+    .badge-red { background: #fce4ec; color: #c62828; }
+    .mock-row-text { font-size: 12px; color: #444; flex: 1; }
+    .mock-row-val { font-size: 11px; color: #888; white-space: nowrap; }
+    .mock-progress { background: #fff; border-radius: 6px; padding: 12px; border: 1px solid #f0f4ff; margin-bottom: 6px; }
+    .mock-prog-label { font-size: 11px; color: #666; margin-bottom: 5px; }
+    .mock-prog-bar { background: #e8eef8; border-radius: 4px; height: 6px; }
+    .mock-prog-fill { background: linear-gradient(90deg, #0d47a1, #0288d1); height: 6px; border-radius: 4px; }
+
+    /* ── Saudi features ──────────────────────────────────────────────────── */
+    .saudi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 12px;
+    }
+    .saudi-item {
+      background: #fff;
+      border-radius: 8px;
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border: 1px solid #dce8f5;
+      box-shadow: 0 1px 4px rgba(13,71,161,0.06);
+    }
+    .saudi-icon { font-size: 24px; }
+    .saudi-text { font-size: 13px; color: #444; font-weight: 500; }
+
+    /* ── Guarantee types ─────────────────────────────────────────────────── */
+    .guarantee-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 14px;
+    }
+    .guarantee-card {
+      background: #fff;
+      border-radius: 10px;
+      padding: 20px;
+      border-top: 4px solid;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+    }
+    .guarantee-card.bid { border-color: #ff9800; }
+    .guarantee-card.perf { border-color: #0d47a1; }
+    .guarantee-card.adv { border-color: #00897b; }
+    .guarantee-card.ret { border-color: #7b1fa2; }
+    .guarantee-card h4 { font-size: 14px; font-weight: 700; margin-bottom: 6px; color: #1a1a2e; }
+    .guarantee-card p { font-size: 12px; color: #777; line-height: 1.5; }
+    .guarantee-card .ar { font-size: 12px; color: #0288d1; direction: rtl; margin-top: 6px; font-weight: 600; }
+
+    /* ── Footer ──────────────────────────────────────────────────────────── */
+    .footer {
+      background: #0d2137;
+      color: rgba(255,255,255,0.7);
+      text-align: center;
+      padding: 28px 20px;
+      font-size: 13px;
+    }
+    .footer strong { color: #29b6f6; }
+    .footer .version { margin-top: 6px; font-size: 12px; opacity: 0.5; }
+  </style>
+</head>
+<body>
+
+<!-- ── Hero ──────────────────────────────────────────────────────────────── -->
+<div class="hero">
+  <div class="hero-logo">📜</div>
+  <h1>LeapAI <span>Unified Contracts</span> System</h1>
+  <div class="subtitle">Saudi Ministry of Electricity — Contract Management Platform</div>
+  <div class="arabic">نظام العقود الموحد — وزارة الكهرباء السعودية</div>
+  <div class="badges">
+    <span class="badge">🇸🇦 Saudi Arabia</span>
+    <span class="badge">Odoo 19</span>
+    <span class="badge">Arabic &amp; English</span>
+    <span class="badge">VAT 15%</span>
+    <span class="badge">Nitaqat</span>
+    <span class="badge">SEC Ready</span>
+  </div>
+</div>
+
+<!-- ── Stats ─────────────────────────────────────────────────────────────── -->
+<div class="stats">
+  <div class="stat">
+    <div class="stat-num">6</div>
+    <div class="stat-lbl">Core Models</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num">4</div>
+    <div class="stat-lbl">Contract Pillars</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num">15%</div>
+    <div class="stat-lbl">VAT Auto-Calc</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num">100%</div>
+    <div class="stat-lbl">Bilingual</div>
+  </div>
+</div>
+
+<!-- ── Overview ──────────────────────────────────────────────────────────── -->
+<div class="section">
+  <div class="section-title">
+    About This System
+    <span class="ar">عن هذا النظام</span>
+  </div>
+  <p style="font-size:15px; color:#444; max-width:860px; margin-bottom:20px;">
+    <strong>LeapAI Unified Contracts System</strong> is a purpose-built contract lifecycle management platform
+    for Saudi Arabia's electricity sector. Aligned with the Saudi Ministry of Electricity's procurement and
+    contracting regulations, it manages the entire journey from competitive tender through bid evaluation,
+    contract award, interim payment certificates, bank guarantees, to final closeout.
+  </p>
+  <p style="font-size:15px; color:#444; max-width:860px;">
+    Built on Odoo 19, fully bilingual Arabic–English, with native support for Saudi VAT 15%,
+    Nitaqat compliance, CR and VAT registration numbers, Saudi IBAN format, and the Kingdom's
+    6 administrative regions.
+  </p>
+</div>
+
+<!-- ── Contract Lifecycle Pipeline ──────────────────────────────────────── -->
+<div class="section alt">
+  <div class="section-title">
+    Contract Lifecycle
+    <span class="ar">دورة حياة العقد</span>
+  </div>
+  <div class="pipeline">
+    <div class="pipe-step">
+      <span class="pipe-icon">📢</span>
+      <div class="pipe-label">Tender</div>
+      <div class="pipe-sub">مناقصة</div>
+    </div>
+    <div class="pipe-step">
+      <span class="pipe-icon">📋</span>
+      <div class="pipe-label">Bidding</div>
+      <div class="pipe-sub">العطاءات</div>
+    </div>
+    <div class="pipe-step">
+      <span class="pipe-icon">⚖️</span>
+      <div class="pipe-label">Evaluation</div>
+      <div class="pipe-sub">التقييم</div>
+    </div>
+    <div class="pipe-step">
+      <span class="pipe-icon">🏆</span>
+      <div class="pipe-label">Award</div>
+      <div class="pipe-sub">الترسية</div>
+    </div>
+    <div class="pipe-step">
+      <span class="pipe-icon">📜</span>
+      <div class="pipe-label">Contract</div>
+      <div class="pipe-sub">العقد</div>
+    </div>
+    <div class="pipe-step">
+      <span class="pipe-icon">💳</span>
+      <div class="pipe-label">IPC/FPC</div>
+      <div class="pipe-sub">شهادات الدفع</div>
+    </div>
+    <div class="pipe-step">
+      <span class="pipe-icon">✅</span>
+      <div class="pipe-label">Closeout</div>
+      <div class="pipe-sub">الإنهاء</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Core Modules ───────────────────────────────────────────────────────── -->
+<div class="section">
+  <div class="section-title">
+    Four Pillars
+    <span class="ar">الأركان الأربعة</span>
+  </div>
+  <div class="feature-grid">
+
+    <div class="feature-card">
+      <span class="feature-icon">📢</span>
+      <h3>Tender &amp; Bidding — المناقصات</h3>
+      <p>Manage open, limited, direct, and framework tenders. Track bidder Nitaqat colors,
+         technical (70%) and financial (30%) weighted scoring. Auto-mark the winning bidder
+         and transition the tender to Awarded state.</p>
+      <div class="ar-label">نظام المناقصات والعطاءات</div>
+    </div>
+
+    <div class="feature-card">
+      <span class="feature-icon">📜</span>
+      <h3>Contract Management — إدارة العقود</h3>
+      <p>Full contract details including lump-sum, unit-rate, turnkey, and framework types.
+         Contractor CR, VAT, IBAN tracking. Live financial summary: certified, paid, balance,
+         and completion percentage.</p>
+      <div class="ar-label">إدارة العقود والتعديلات</div>
+    </div>
+
+    <div class="feature-card">
+      <span class="feature-icon">💳</span>
+      <h3>Payment Certificates — شهادات الدفع</h3>
+      <p>Interim (IPC) and Final (FPC) payment certificates. BOQ line items, cumulative
+         quantities, retention deduction (10%), advance recovery, VAT 15%, net payable
+         auto-calculated. Full approval workflow.</p>
+      <div class="ar-label">شهادات الدفع المرحلية والنهائية</div>
+    </div>
+
+    <div class="feature-card">
+      <span class="feature-icon">🏦</span>
+      <h3>Bank Guarantees — الضمانات البنكية</h3>
+      <p>Bid bond (2%), performance (10%), advance payment, and retention/maintenance
+         guarantees. Automatic expiry alerts at 30 days (warning) and 14 days (critical).
+         Extend, release, claim, or expire actions.</p>
+      <div class="ar-label">الضمانات البنكية وضمانات الصيانة</div>
+    </div>
+
+    <div class="feature-card">
+      <span class="feature-icon">✏️</span>
+      <h3>Contract Amendments — تعديلات العقد</h3>
+      <p>Value increase/decrease, time extensions, scope changes, or combined amendments.
+         On approval, automatically updates the contract value and/or end date. Manager
+         approval workflow.</p>
+      <div class="ar-label">أوامر التغيير والتعديلات</div>
+    </div>
+
+    <div class="feature-card">
+      <span class="feature-icon">🔔</span>
+      <h3>Expiry &amp; Alert System — نظام التنبيهات</h3>
+      <p>Automatic monitoring of guarantee expiry dates. Color-coded alerts: green (safe),
+         orange (30 days), red (14 days), grey (expired). Never miss a guarantee renewal.</p>
+      <div class="ar-label">نظام تنبيهات انتهاء الضمانات</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── Live Mockups ───────────────────────────────────────────────────────── -->
+<div class="mockup-section">
+  <div class="section-title">
+    Interface Preview
+    <span class="ar">معاينة الواجهة</span>
+  </div>
+  <div class="mockup-grid">
+
+    <!-- Contract form mockup -->
+    <div class="mockup-card">
+      <div class="mockup-bar">
+        <div class="mockup-dot" style="background:#ff5f57"></div>
+        <div class="mockup-dot" style="background:#ffbd2e"></div>
+        <div class="mockup-dot" style="background:#28ca41"></div>
+        <span class="mockup-title-bar">Contract — عقد CON-2025-0001</span>
+      </div>
+      <div class="mockup-body">
+        <div class="mock-header">
+          <div class="mock-h1" style="color:#0d47a1">CON-2025-0001</div>
+          <div class="mock-sub">132kV Substation — Riyadh North · Active</div>
+        </div>
+        <div class="mock-stat-row">
+          <div class="mock-stat"><div class="n">3</div><div class="l">IPCs</div></div>
+          <div class="mock-stat"><div class="n">2</div><div class="l">Guarantees</div></div>
+          <div class="mock-stat"><div class="n">1</div><div class="l">Amendments</div></div>
+        </div>
+        <div class="mock-row">
+          <span class="mock-row-text">Contract Value</span>
+          <span class="mock-row-val" style="font-weight:700">SAR 17,800,000</span>
+        </div>
+        <div class="mock-row">
+          <span class="mock-row-text">VAT 15%</span>
+          <span class="mock-row-val">SAR 2,670,000</span>
+        </div>
+        <div class="mock-row">
+          <span class="mock-row-text">Total Certified</span>
+          <span class="mock-row-val" style="color:#388e3c">SAR 5,800,000</span>
+        </div>
+        <div class="mock-row">
+          <span class="mock-row-text">Balance Remaining</span>
+          <span class="mock-row-val" style="color:#0d47a1">SAR 12,000,000</span>
+        </div>
+        <div class="mock-progress">
+          <div class="mock-prog-label">Completion — 32.6%</div>
+          <div class="mock-prog-bar"><div class="mock-prog-fill" style="width:33%"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- IPC mockup -->
+    <div class="mockup-card">
+      <div class="mockup-bar">
+        <div class="mockup-dot" style="background:#ff5f57"></div>
+        <div class="mockup-dot" style="background:#ffbd2e"></div>
+        <div class="mockup-dot" style="background:#28ca41"></div>
+        <span class="mockup-title-bar">Payment Certificate — IPC-2025-0003</span>
+      </div>
+      <div class="mockup-body">
+        <div class="mock-header">
+          <div class="mock-h1" style="color:#0d47a1">IPC #3 — Interim</div>
+          <div class="mock-sub">Period: 01 Jul – 31 Jul 2025</div>
+        </div>
+        <div class="mock-row">
+          <span class="mock-row-text">Work Done to Date</span>
+          <span class="mock-row-val">SAR 5,800,000</span>
+        </div>
+        <div class="mock-row">
+          <span class="mock-row-text">Previous Certified</span>
+          <span class="mock-row-val">SAR 3,950,000</span>
+        </div>
+        <div class="mock-row">
+          <span class="mock-row-text">This Period Gross</span>
+          <span class="mock-row-val" style="font-weight:700">SAR 1,850,000</span>
+        </div>
+        <div class="mock-row">
+          <span class="mock-row-text">Retention (10%)</span>
+          <span class="mock-row-val" style="color:#c62828">– SAR 185,000</span>
+        </div>
+        <div class="mock-row">
+          <span class="mock-row-text">Advance Recovery</span>
+          <span class="mock-row-val" style="color:#c62828">– SAR 185,000</span>
+        </div>
+        <div class="mock-row">
+          <span class="mock-row-text">VAT 15%</span>
+          <span class="mock-row-val">SAR 222,000</span>
+        </div>
+        <div class="mock-row" style="background:#e8f5e9; border-color:#c8e6c9;">
+          <span class="mock-row-text" style="font-weight:700; color:#2e7d32">Net Payable</span>
+          <span class="mock-row-val" style="font-weight:700; color:#2e7d32">SAR 1,702,000</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Guarantee tracking mockup -->
+    <div class="mockup-card">
+      <div class="mockup-bar">
+        <div class="mockup-dot" style="background:#ff5f57"></div>
+        <div class="mockup-dot" style="background:#ffbd2e"></div>
+        <div class="mockup-dot" style="background:#28ca41"></div>
+        <span class="mockup-title-bar">Bank Guarantees — الضمانات البنكية</span>
+      </div>
+      <div class="mockup-body">
+        <div class="mock-stat-row">
+          <div class="mock-stat"><div class="n" style="color:#388e3c">3</div><div class="l">Active</div></div>
+          <div class="mock-stat"><div class="n" style="color:#e65c00">1</div><div class="l">Expiring</div></div>
+          <div class="mock-stat"><div class="n" style="color:#c62828">0</div><div class="l">Critical</div></div>
+        </div>
+        <div class="mock-row">
+          <span class="mock-badge badge-active">Active</span>
+          <span class="mock-row-text">Performance Bond — ARB</span>
+          <span class="mock-row-val">SAR 1,780,000</span>
+        </div>
+        <div class="mock-row" style="background:#fff8e1; border-color:#ffe082;">
+          <span class="mock-badge badge-progress">⚠ 28 days</span>
+          <span class="mock-row-text">Advance Guarantee — SABB</span>
+          <span class="mock-row-val">SAR 1,780,000</span>
+        </div>
+        <div class="mock-row">
+          <span class="mock-badge badge-blue">Released</span>
+          <span class="mock-row-text">Retention Bond — NCB</span>
+          <span class="mock-row-val">SAR 360,000</span>
+        </div>
+        <div class="mock-row">
+          <span class="mock-badge badge-active">Active</span>
+          <span class="mock-row-text">Bid Bond — Riyadh Tender</span>
+          <span class="mock-row-val">SAR 370,000</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── Guarantee Types ─────────────────────────────────────────────────── -->
+<div class="section alt">
+  <div class="section-title">
+    Guarantee Types Supported
+    <span class="ar">أنواع الضمانات المدعومة</span>
+  </div>
+  <div class="guarantee-grid">
+    <div class="guarantee-card bid">
+      <h4>🔨 Bid Bond — ضمان ابتدائي</h4>
+      <p>Submitted with tender to ensure bidder seriousness. Typically 2% of estimated value. Released after award.</p>
+      <div class="ar">ضمان ابتدائي للمناقصة</div>
+    </div>
+    <div class="guarantee-card perf">
+      <h4>🏆 Performance Bond — ضمان حسن التنفيذ</h4>
+      <p>10% of contract value. Held throughout execution to guarantee contractor performs obligations.</p>
+      <div class="ar">ضمان حسن التنفيذ</div>
+    </div>
+    <div class="guarantee-card adv">
+      <h4>💵 Advance Payment — ضمان الدفعة المقدمة</h4>
+      <p>Equal to the advance paid (10%). Reduces proportionally as advance is recovered from IPCs.</p>
+      <div class="ar">ضمان الدفعة المقدمة</div>
+    </div>
+    <div class="guarantee-card ret">
+      <h4>🔧 Retention/Maintenance — ضمان الصيانة</h4>
+      <p>Replaces cash retention after project completion. Held during defects liability period.</p>
+      <div class="ar">ضمان الصيانة والاستبقاء</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Saudi Compliance ───────────────────────────────────────────────────── -->
+<div class="section">
+  <div class="section-title">
+    Saudi Arabia Compliance
+    <span class="ar">الامتثال للمملكة العربية السعودية</span>
+  </div>
+  <div class="saudi-grid">
+    <div class="saudi-item"><span class="saudi-icon">⚡</span><span class="saudi-text">Saudi Electricity Company (SEC)</span></div>
+    <div class="saudi-item"><span class="saudi-icon">💰</span><span class="saudi-text">VAT 15% Auto-Calculated</span></div>
+    <div class="saudi-item"><span class="saudi-icon">🏢</span><span class="saudi-text">Nitaqat Compliance Colors</span></div>
+    <div class="saudi-item"><span class="saudi-icon">📍</span><span class="saudi-text">6 Saudi Regions (منطقة)</span></div>
+    <div class="saudi-item"><span class="saudi-icon">🪪</span><span class="saudi-text">CR &amp; VAT Numbers</span></div>
+    <div class="saudi-item"><span class="saudi-icon">🏦</span><span class="saudi-text">Saudi IBAN &amp; Bank Codes</span></div>
+    <div class="saudi-item"><span class="saudi-icon">📜</span><span class="saudi-text">Full Arabic Interface</span></div>
+    <div class="saudi-item"><span class="saudi-icon">🔢</span><span class="saudi-text">TND / CON / IPC Sequences</span></div>
+  </div>
+</div>
+
+<!-- ── Screenshots ───────────────────────────────────────────────────────── -->
+<div class="section" style="background:#060f1a; padding:48px 40px;">
+  <div class="section-title" style="color:#29b6f6; border-left-color:#0288d1;">
+    Screenshots
+    <span class="ar" style="color:rgba(255,255,255,0.5)">لقطات الشاشة</span>
+  </div>
+
+  <p style="color:rgba(255,255,255,0.6); font-size:14px; margin-bottom:24px;">
+    Realistic UI previews — actual Odoo 19 interface with Saudi contract data
+  </p>
+
+  <div style="display:flex; flex-direction:column; gap:28px;">
+
+    <div style="border-radius:12px; overflow:hidden; box-shadow:0 12px 40px rgba(0,0,0,0.55);">
+      <div style="background:#0d2137; padding:10px 16px; display:flex; align-items:center; gap:8px;">
+        <span style="width:12px;height:12px;border-radius:50%;background:#ff5f57;display:inline-block;"></span>
+        <span style="width:12px;height:12px;border-radius:50%;background:#ffbd2e;display:inline-block;"></span>
+        <span style="width:12px;height:12px;border-radius:50%;background:#28ca41;display:inline-block;"></span>
+        <span style="color:rgba(255,255,255,0.65);font-size:12px;margin-left:8px;font-weight:600;">
+          Contract Form View — نموذج العقد مع الملخص المالي
+        </span>
+      </div>
+      <img src="screen_contract.png" alt="Contract Form View" style="width:100%;display:block;border:0;"/>
+    </div>
+
+    <div style="border-radius:12px; overflow:hidden; box-shadow:0 12px 40px rgba(0,0,0,0.55);">
+      <div style="background:#0d2137; padding:10px 16px; display:flex; align-items:center; gap:8px;">
+        <span style="width:12px;height:12px;border-radius:50%;background:#ff5f57;display:inline-block;"></span>
+        <span style="width:12px;height:12px;border-radius:50%;background:#ffbd2e;display:inline-block;"></span>
+        <span style="width:12px;height:12px;border-radius:50%;background:#28ca41;display:inline-block;"></span>
+        <span style="color:rgba(255,255,255,0.65);font-size:12px;margin-left:8px;font-weight:600;">
+          Interim Payment Certificate (IPC) — شهادة الدفع المرحلية مع الحسابات
+        </span>
+      </div>
+      <img src="screen_ipc.png" alt="Interim Payment Certificate" style="width:100%;display:block;border:0;"/>
+    </div>
+
+    <div style="border-radius:12px; overflow:hidden; box-shadow:0 12px 40px rgba(0,0,0,0.55);">
+      <div style="background:#0d2137; padding:10px 16px; display:flex; align-items:center; gap:8px;">
+        <span style="width:12px;height:12px;border-radius:50%;background:#ff5f57;display:inline-block;"></span>
+        <span style="width:12px;height:12px;border-radius:50%;background:#ffbd2e;display:inline-block;"></span>
+        <span style="width:12px;height:12px;border-radius:50%;background:#28ca41;display:inline-block;"></span>
+        <span style="color:rgba(255,255,255,0.65);font-size:12px;margin-left:8px;font-weight:600;">
+          Bank Guarantees List with Expiry Alerts — الضمانات البنكية مع تنبيهات الانتهاء
+        </span>
+      </div>
+      <img src="screen_guarantees.png" alt="Bank Guarantees" style="width:100%;display:block;border:0;"/>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── Footer ─────────────────────────────────────────────────────────────── -->
+<div class="footer">
+  <strong>LeapAI Unified Contracts System</strong> — نظام العقود الموحد<br/>
+  Saudi Ministry of Electricity · وزارة الكهرباء السعودية
+  <div class="version">Version 19.0.1.0.0 · Odoo 19 · © 2025 LeapAI</div>
+</div>
+
+</body>
+</html>

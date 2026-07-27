@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ── Root App Menu ────────────────────────────────────────────────────── -->
+    <menuitem
+        id="menu_contracts_root"
+        name="Contracts — العقود"
+        sequence="55"
+        web_icon="leapai_contracts,static/description/icon.png"
+        groups="leapai_contracts.group_contracts_user"/>
+
+    <!-- ── Tendering ─────────────────────────────────────────────────────────── -->
+    <menuitem
+        id="menu_contracts_tendering"
+        name="Tendering — المناقصات"
+        parent="menu_contracts_root"
+        sequence="10"/>
+
+    <menuitem
+        id="menu_contracts_tender"
+        name="Tenders — المناقصات"
+        parent="menu_contracts_tendering"
+        action="action_contract_tender"
+        sequence="10"/>
+
+    <menuitem
+        id="menu_contracts_bid"
+        name="Bids — العطاءات"
+        parent="menu_contracts_tendering"
+        action="action_contract_bid"
+        sequence="20"/>
+
+    <!-- ── Contracts ─────────────────────────────────────────────────────────── -->
+    <menuitem
+        id="menu_contracts_main"
+        name="Contracts — العقود"
+        parent="menu_contracts_root"
+        sequence="20"/>
+
+    <menuitem
+        id="menu_contracts_contract"
+        name="All Contracts — جميع العقود"
+        parent="menu_contracts_main"
+        action="action_contract_contract"
+        sequence="10"/>
+
+    <menuitem
+        id="menu_contracts_amendment"
+        name="Amendments — التعديلات"
+        parent="menu_contracts_main"
+        action="action_contract_amendment"
+        sequence="20"/>
+
+    <!-- ── Finance ───────────────────────────────────────────────────────────── -->
+    <menuitem
+        id="menu_contracts_finance"
+        name="Finance — المالية"
+        parent="menu_contracts_root"
+        sequence="30"/>
+
+    <menuitem
+        id="menu_contracts_payment_certificate"
+        name="Payment Certificates — شهادات الدفع"
+        parent="menu_contracts_finance"
+        action="action_contract_payment_certificate"
+        sequence="10"/>
+
+    <menuitem
+        id="menu_contracts_guarantee"
+        name="Bank Guarantees — الضمانات البنكية"
+        parent="menu_contracts_finance"
+        action="action_contract_guarantee"
+        sequence="20"/>
+
+</odoo>

@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ── Form ─────────────────────────────────────────────────────────────── -->
+    <record id="view_contract_tender_form" model="ir.ui.view">
+        <field name="name">contract.tender.form</field>
+        <field name="model">contract.tender</field>
+        <field name="arch" type="xml">
+            <form string="Tender — مناقصة">
+                <header>
+                    <button name="action_publish"   string="Publish — نشر"         type="object" class="btn-primary"
+                            invisible="state != 'draft'"/>
+                    <button name="action_close"     string="Close Bids — إغلاق"    type="object"
+                            invisible="state != 'published'"/>
+                    <button name="action_evaluate"  string="Evaluate — تقييم"      type="object"
+                            invisible="state != 'closed'"/>
+                    <button name="action_award"     string="Award — ترسية"         type="object"
+                            invisible="state != 'evaluation'"/>
+                    <button name="action_cancel"    string="Cancel — إلغاء"        type="object"
+                            invisible="state in ('awarded','cancelled')"/>
+                    <button name="action_reset_draft" string="Reset to Draft"      type="object"
+                            invisible="state == 'draft'" groups="leapai_contracts.group_contracts_manager"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,published,closed,evaluation,awarded"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_bids" type="object" class="oe_stat_button" icon="fa-gavel">
+                            <field name="bid_count" widget="statinfo" string="Bids — عطاءات"/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <label for="reference" class="oe_edit_only"/>
+                        <h1><field name="reference" readonly="1"/></h1>
+                        <h2><field name="name" placeholder="Tender Name — اسم المناقصة"/></h2>
+                    </div>
+                    <group>
+                        <group string="General — عام">
+                            <field name="tender_type"/>
+                            <field name="responsible_id"/>
+                            <field name="department"/>
+                            <field name="region"/>
+                            <field name="site_location"/>
+                        </group>
+                        <group string="Dates — التواريخ">
+                            <field name="date_created"/>
+                            <field name="publish_date"/>
+                            <field name="closing_date"/>
+                            <field name="award_date" invisible="state != 'awarded'"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Financial &amp; Terms — المالية والشروط">
+                            <group>
+                                <group string="Estimated Value — القيمة التقديرية">
+                                    <field name="currency_id" invisible="1"/>
+                                    <field name="estimated_value"/>
+                                    <field name="vat_included"/>
+                                </group>
+                                <group string="Guarantee &amp; Payment Terms — شروط الضمان والدفع">
+                                    <field name="bid_bond_percentage"/>
+                                    <field name="performance_bond_percentage"/>
+                                    <field name="advance_percentage"/>
+                                    <field name="retention_percentage"/>
+                                </group>
+                            </group>
+                            <group string="Qualification Requirements — متطلبات التأهيل">
+                                <field name="min_experience_years"/>
+                                <field name="nitaqat_required"/>
+                            </group>
+                        </page>
+                        <page string="Scope of Work — نطاق العمل">
+                            <field name="scope_of_work" placeholder="Describe the scope of work — وصف نطاق العمل"/>
+                        </page>
+                        <page string="Bids — العطاءات" invisible="state == 'draft'">
+                            <field name="bid_ids" readonly="1">
+                                <list decoration-success="is_winner == True"
+                                      decoration-danger="state == 'rejected'">
+                                    <field name="name"/>
+                                    <field name="partner_id"/>
+                                    <field name="bid_value"/>
+                                    <field name="technical_score"/>
+                                    <field name="financial_score"/>
+                                    <field name="total_score"/>
+                                    <field name="is_winner"/>
+                                    <field name="state"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Notes — ملاحظات">
+                            <field name="description" placeholder="Description — وصف"/>
+                            <field name="notes" placeholder="Internal notes — ملاحظات داخلية"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- ── List ─────────────────────────────────────────────────────────────── -->
+    <record id="view_contract_tender_list" model="ir.ui.view">
+        <field name="name">contract.tender.list</field>
+        <field name="model">contract.tender</field>
+        <field name="arch" type="xml">
+            <list string="Tenders — المناقصات"
+                  decoration-info="state == 'published'"
+                  decoration-warning="state == 'closed'"
+                  decoration-success="state == 'awarded'"
+                  decoration-muted="state == 'cancelled'">
+                <field name="reference"/>
+                <field name="name"/>
+                <field name="tender_type"/>
+                <field name="region"/>
+                <field name="estimated_value"/>
+                <field name="currency_id" column_invisible="1"/>
+                <field name="closing_date"/>
+                <field name="bid_count"/>
+                <field name="responsible_id"/>
+                <field name="state" widget="badge"
+                       decoration-info="state == 'published'"
+                       decoration-warning="state in ('closed','evaluation')"
+                       decoration-success="state == 'awarded'"
+                       decoration-danger="state == 'cancelled'"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ── Kanban ───────────────────────────────────────────────────────────── -->
+    <record id="view_contract_tender_kanban" model="ir.ui.view">
+        <field name="name">contract.tender.kanban</field>
+        <field name="model">contract.tender</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="state" class="o_kanban_small_column">
+                <field name="name"/>
+                <field name="reference"/>
+                <field name="tender_type"/>
+                <field name="estimated_value"/>
+                <field name="currency_id"/>
+                <field name="closing_date"/>
+                <field name="bid_count"/>
+                <field name="state"/>
+                <field name="responsible_id"/>
+                <templates>
+                    <t t-name="card">
+                        <div class="o_kanban_card_header">
+                            <span class="fw-bold" t-esc="record.reference.value"/>
+                        </div>
+                        <div class="o_kanban_card_content">
+                            <div class="fw-bold fs-5" t-esc="record.name.value"/>
+                            <div class="text-muted" t-esc="record.tender_type.value"/>
+                            <div>
+                                <span class="fw-bold" t-esc="record.estimated_value.value"/>
+                                <span t-esc="' ' + record.currency_id.value"/>
+                            </div>
+                            <div invisible="not closing_date">
+                                Closes: <span t-esc="record.closing_date.value"/>
+                            </div>
+                        </div>
+                        <div class="o_kanban_card_footer">
+                            <field name="responsible_id" widget="many2one_avatar_user"/>
+                            <span class="badge rounded-pill ms-auto" t-esc="record.bid_count.value"/> bids
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- ── Search ───────────────────────────────────────────────────────────── -->
+    <record id="view_contract_tender_search" model="ir.ui.view">
+        <field name="name">contract.tender.search</field>
+        <field name="model">contract.tender</field>
+        <field name="arch" type="xml">
+            <search string="Search Tenders — البحث في المناقصات">
+                <field name="name" string="Tender Name / Reference"
+                       filter_domain="['|', ('name','ilike',self), ('reference','ilike',self)]"/>
+                <field name="responsible_id" string="Responsible"/>
+                <separator/>
+                <filter string="Draft — مسودة"         name="draft"      domain="[('state','=','draft')]"/>
+                <filter string="Published — منشورة"   name="published"  domain="[('state','=','published')]"/>
+                <filter string="Evaluation — تقييم"   name="evaluation" domain="[('state','=','evaluation')]"/>
+                <filter string="Awarded — مرسّاة"     name="awarded"    domain="[('state','=','awarded')]"/>
+                <separator/>
+                <filter string="My Tenders — مناقصاتي" name="mine"
+                        domain="[('responsible_id','=',uid)]"/>
+                <group name="group_by">
+                    <filter string="Type"   name="by_type"   context="{'group_by': 'tender_type'}"/>
+                    <filter string="Region" name="by_region" context="{'group_by': 'region'}"/>
+                    <filter string="Status" name="by_state"  context="{'group_by': 'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- ── Action ───────────────────────────────────────────────────────────── -->
+    <record id="action_contract_tender" model="ir.actions.act_window">
+        <field name="name">Tenders — المناقصات</field>
+        <field name="res_model">contract.tender</field>
+        <field name="view_mode">list,kanban,form</field>
+        <field name="search_view_id" ref="view_contract_tender_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first Tender — أنشئ أول مناقصة
+            </p>
+        </field>
+    </record>
+
+</odoo>

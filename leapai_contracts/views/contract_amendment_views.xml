@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ── Form ─────────────────────────────────────────────────────────────── -->
+    <record id="view_contract_amendment_form" model="ir.ui.view">
+        <field name="name">contract.amendment.form</field>
+        <field name="model">contract.amendment</field>
+        <field name="arch" type="xml">
+            <form string="Contract Amendment — تعديل عقد">
+                <header>
+                    <button name="action_submit"     string="Submit — تقديم"     type="object" class="btn-primary"
+                            invisible="state != 'draft'"/>
+                    <button name="action_approve"    string="Approve — اعتماد"   type="object" class="btn-success"
+                            invisible="state != 'submitted'"
+                            groups="leapai_contracts.group_contracts_manager"/>
+                    <button name="action_reject"     string="Reject — رفض"       type="object" class="btn-danger"
+                            invisible="state != 'submitted'"
+                            groups="leapai_contracts.group_contracts_manager"/>
+                    <button name="action_reset_draft" string="Reset Draft"        type="object"
+                            invisible="state == 'draft'"
+                            groups="leapai_contracts.group_contracts_manager"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,submitted,approved"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <label for="reference"/>
+                        <h1><field name="reference" readonly="1"/></h1>
+                        <h2><field name="name" placeholder="Amendment Title — عنوان التعديل"/></h2>
+                    </div>
+                    <group>
+                        <group string="Amendment Info — معلومات التعديل">
+                            <field name="contract_id"/>
+                            <field name="amendment_type"/>
+                            <field name="date_submitted"/>
+                        </group>
+                        <group string="Approval — الاعتماد" invisible="state == 'draft'">
+                            <field name="approved_by" readonly="1"/>
+                            <field name="date_approved" readonly="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Value Change — تغيير القيمة"
+                              invisible="amendment_type not in ('value','combined')">
+                            <group>
+                                <group>
+                                    <field name="currency_id" invisible="1"/>
+                                    <field name="original_value" readonly="1"/>
+                                    <field name="value_change"/>
+                                    <field name="new_contract_value" readonly="1"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Time Extension — تمديد الفترة"
+                              invisible="amendment_type not in ('time','combined')">
+                            <group>
+                                <group>
+                                    <field name="original_end_date" readonly="1"/>
+                                    <field name="time_extension_days"/>
+                                    <field name="new_end_date" readonly="1"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Justification — المبرر">
+                            <field name="reason"
+                                   placeholder="Reason and justification for the amendment — المبرر والسبب"/>
+                            <field name="description"
+                                   placeholder="Description of changes — وصف التغييرات"/>
+                            <field name="notes" placeholder="Notes — ملاحظات"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- ── List ─────────────────────────────────────────────────────────────── -->
+    <record id="view_contract_amendment_list" model="ir.ui.view">
+        <field name="name">contract.amendment.list</field>
+        <field name="model">contract.amendment</field>
+        <field name="arch" type="xml">
+            <list string="Amendments — التعديلات"
+                  decoration-success="state == 'approved'"
+                  decoration-warning="state == 'submitted'"
+                  decoration-danger="state == 'rejected'">
+                <field name="reference"/>
+                <field name="name"/>
+                <field name="contract_id"/>
+                <field name="amendment_type"/>
+                <field name="value_change"/>
+                <field name="currency_id" column_invisible="1"/>
+                <field name="time_extension_days"/>
+                <field name="new_end_date"/>
+                <field name="date_submitted"/>
+                <field name="approved_by"/>
+                <field name="state" widget="badge"
+                       decoration-warning="state == 'submitted'"
+                       decoration-success="state == 'approved'"
+                       decoration-danger="state == 'rejected'"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ── Search ───────────────────────────────────────────────────────────── -->
+    <record id="view_contract_amendment_search" model="ir.ui.view">
+        <field name="name">contract.amendment.search</field>
+        <field name="model">contract.amendment</field>
+        <field name="arch" type="xml">
+            <search string="Search Amendments — البحث في التعديلات">
+                <field name="name"/>
+                <field name="contract_id"/>
+                <separator/>
+                <filter string="Pending Approval — في انتظار الاعتماد"
+                        name="pending" domain="[('state','=','submitted')]"/>
+                <filter string="Approved — معتمد"
+                        name="approved" domain="[('state','=','approved')]"/>
+                <filter string="Rejected — مرفوض"
+                        name="rejected" domain="[('state','=','rejected')]"/>
+                <group name="group_by">
+                    <filter string="Contract"  name="by_contract" context="{'group_by': 'contract_id'}"/>
+                    <filter string="Type"      name="by_type"     context="{'group_by': 'amendment_type'}"/>
+                    <filter string="Status"    name="by_state"    context="{'group_by': 'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- ── Action ───────────────────────────────────────────────────────────── -->
+    <record id="action_contract_amendment" model="ir.actions.act_window">
+        <field name="name">Amendments — التعديلات</field>
+        <field name="res_model">contract.amendment</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_contract_amendment_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No amendments yet — لا توجد تعديلات بعد
+            </p>
+        </field>
+    </record>
+
+</odoo>

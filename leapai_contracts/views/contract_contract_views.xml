@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ── Form ─────────────────────────────────────────────────────────────── -->
+    <record id="view_contract_contract_form" model="ir.ui.view">
+        <field name="name">contract.contract.form</field>
+        <field name="model">contract.contract</field>
+        <field name="arch" type="xml">
+            <form string="Contract — عقد">
+                <header>
+                    <button name="action_activate"   string="Activate — تفعيل"     type="object" class="btn-primary"
+                            invisible="state != 'draft'"/>
+                    <button name="action_suspend"    string="Suspend — تعليق"      type="object"
+                            invisible="state != 'active'"/>
+                    <button name="action_complete"   string="Complete — إنهاء"     type="object" class="btn-success"
+                            invisible="state not in ('active','suspended')"/>
+                    <button name="action_terminate"  string="Terminate — إنهاء قسري" type="object" class="btn-danger"
+                            invisible="state in ('completed','terminated','draft')"/>
+                    <button name="action_reset_draft" string="Reset Draft"         type="object"
+                            invisible="state == 'draft'" groups="leapai_contracts.group_contracts_manager"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,active,completed"/>
+                </header>
+                <sheet>
+                    <!-- Smart Buttons -->
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_certificates" type="object"
+                                class="oe_stat_button" icon="fa-file-text-o">
+                            <field name="payment_certificate_count" widget="statinfo"
+                                   string="Certificates — شهادات"/>
+                        </button>
+                        <button name="action_view_guarantees" type="object"
+                                class="oe_stat_button" icon="fa-university">
+                            <field name="guarantee_count" widget="statinfo"
+                                   string="Guarantees — ضمانات"/>
+                        </button>
+                        <button name="action_view_amendments" type="object"
+                                class="oe_stat_button" icon="fa-pencil-square-o">
+                            <field name="amendment_count" widget="statinfo"
+                                   string="Amendments — تعديلات"/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <label for="reference"/>
+                        <h1><field name="reference" readonly="1"/></h1>
+                        <h2><field name="name" placeholder="Contract Name — اسم العقد"/></h2>
+                    </div>
+                    <group>
+                        <group string="Contract Details — تفاصيل العقد">
+                            <field name="tender_id"/>
+                            <field name="contract_type"/>
+                            <field name="project_manager_id"/>
+                            <field name="contract_officer_id"/>
+                            <field name="region"/>
+                            <field name="site_location"/>
+                        </group>
+                        <group string="Contractor — المقاول">
+                            <field name="partner_id"/>
+                            <field name="partner_cr"/>
+                            <field name="partner_vat"/>
+                            <field name="partner_iban"/>
+                            <field name="partner_bank"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Dates — التواريخ">
+                            <field name="date_signed"/>
+                            <field name="start_date"/>
+                            <field name="end_date"/>
+                            <field name="original_end_date" readonly="1"/>
+                        </group>
+                        <group string="Financial — المالي">
+                            <field name="currency_id"/>
+                            <field name="contract_value"/>
+                            <field name="vat_amount" readonly="1"/>
+                            <field name="total_with_vat" readonly="1"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Payment Terms — شروط الدفع">
+                            <field name="advance_percentage"/>
+                            <field name="advance_amount" readonly="1"/>
+                            <field name="retention_percentage"/>
+                        </group>
+                        <group string="Financial Summary — الملخص المالي" readonly="1">
+                            <field name="total_certified"/>
+                            <field name="total_paid"/>
+                            <field name="balance_remaining"/>
+                            <field name="completion_percentage" widget="percentage"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Scope — نطاق العمل">
+                            <field name="description"
+                                   placeholder="Scope of Work — وصف نطاق العمل وأهداف العقد"/>
+                        </page>
+                        <page string="Notes — ملاحظات">
+                            <field name="notes" placeholder="Internal notes — ملاحظات داخلية"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- ── List ─────────────────────────────────────────────────────────────── -->
+    <record id="view_contract_contract_list" model="ir.ui.view">
+        <field name="name">contract.contract.list</field>
+        <field name="model">contract.contract</field>
+        <field name="arch" type="xml">
+            <list string="Contracts — العقود"
+                  decoration-info="state == 'draft'"
+                  decoration-success="state == 'active'"
+                  decoration-warning="state == 'suspended'"
+                  decoration-muted="state in ('completed','terminated')">
+                <field name="reference"/>
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="contract_type"/>
+                <field name="region"/>
+                <field name="contract_value"/>
+                <field name="currency_id" column_invisible="1"/>
+                <field name="completion_percentage" widget="percentage"/>
+                <field name="start_date"/>
+                <field name="end_date"/>
+                <field name="project_manager_id"/>
+                <field name="state" widget="badge"
+                       decoration-info="state == 'draft'"
+                       decoration-success="state == 'active'"
+                       decoration-warning="state == 'suspended'"
+                       decoration-muted="state in ('completed','terminated')"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ── Kanban ───────────────────────────────────────────────────────────── -->
+    <record id="view_contract_contract_kanban" model="ir.ui.view">
+        <field name="name">contract.contract.kanban</field>
+        <field name="model">contract.contract</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="state" class="o_kanban_small_column">
+                <field name="reference"/>
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="contract_value"/>
+                <field name="currency_id"/>
+                <field name="completion_percentage"/>
+                <field name="end_date"/>
+                <field name="state"/>
+                <field name="project_manager_id"/>
+                <templates>
+                    <t t-name="card">
+                        <div class="o_kanban_card_header">
+                            <span class="fw-bold text-muted" t-esc="record.reference.value"/>
+                        </div>
+                        <div class="o_kanban_card_content">
+                            <div class="fw-bold" t-esc="record.name.value"/>
+                            <div class="text-muted" t-esc="record.partner_id.value"/>
+                            <div>
+                                <span class="fw-bold" t-esc="record.contract_value.value"/>
+                                <span t-esc="' ' + record.currency_id.value"/>
+                            </div>
+                            <div class="mt-1">
+                                <div class="progress" style="height:6px">
+                                    <div class="progress-bar bg-success"
+                                         t-attf-style="width: #{record.completion_percentage.value}%"/>
+                                </div>
+                                <small t-esc="record.completion_percentage.value + '%'"/> complete
+                            </div>
+                        </div>
+                        <div class="o_kanban_card_footer">
+                            <field name="project_manager_id" widget="many2one_avatar_user"/>
+                            <span class="text-muted ms-auto">Ends: <span t-esc="record.end_date.value"/></span>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- ── Search ───────────────────────────────────────────────────────────── -->
+    <record id="view_contract_contract_search" model="ir.ui.view">
+        <field name="name">contract.contract.search</field>
+        <field name="model">contract.contract</field>
+        <field name="arch" type="xml">
+            <search string="Search Contracts — البحث في العقود">
+                <field name="name" string="Name / Reference"
+                       filter_domain="['|',('name','ilike',self),('reference','ilike',self)]"/>
+                <field name="partner_id" string="Contractor — المقاول"/>
+                <field name="project_manager_id"/>
+                <separator/>
+                <filter string="Active — سارٍ"        name="active"     domain="[('state','=','active')]"/>
+                <filter string="Draft — مسودة"        name="draft"      domain="[('state','=','draft')]"/>
+                <filter string="Suspended — موقوف"    name="suspended"  domain="[('state','=','suspended')]"/>
+                <filter string="Completed — منتهٍ"    name="completed"  domain="[('state','=','completed')]"/>
+                <separator/>
+                <filter string="My Contracts — عقودي" name="mine"
+                        domain="[('project_manager_id','=',uid)]"/>
+                <group name="group_by">
+                    <filter string="Type"       name="by_type"    context="{'group_by': 'contract_type'}"/>
+                    <filter string="Region"     name="by_region"  context="{'group_by': 'region'}"/>
+                    <filter string="Status"     name="by_state"   context="{'group_by': 'state'}"/>
+                    <filter string="Contractor" name="by_partner" context="{'group_by': 'partner_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- ── Action ───────────────────────────────────────────────────────────── -->
+    <record id="action_contract_contract" model="ir.actions.act_window">
+        <field name="name">Contracts — العقود</field>
+        <field name="res_model">contract.contract</field>
+        <field name="view_mode">list,kanban,form</field>
+        <field name="search_view_id" ref="view_contract_contract_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first Contract — أنشئ أول عقد
+            </p>
+        </field>
+    </record>
+
+</odoo>

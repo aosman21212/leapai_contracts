@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ── Form ─────────────────────────────────────────────────────────────── -->
+    <record id="view_contract_guarantee_form" model="ir.ui.view">
+        <field name="name">contract.guarantee.form</field>
+        <field name="model">contract.guarantee</field>
+        <field name="arch" type="xml">
+            <form string="Bank Guarantee — ضمان بنكي">
+                <header>
+                    <button name="action_extend"  string="Extend — تجديد"       type="object" class="btn-primary"
+                            invisible="state not in ('active','expired')"/>
+                    <button name="action_release" string="Release — إفراج"       type="object" class="btn-success"
+                            invisible="state in ('released','claimed')"/>
+                    <button name="action_claim"   string="Claim — مطالبة"        type="object" class="btn-danger"
+                            invisible="state in ('released','claimed')"/>
+                    <button name="action_expire"  string="Mark Expired — منتهٍ"  type="object"
+                            invisible="state in ('expired','released','claimed')"
+                            groups="leapai_contracts.group_contracts_manager"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="active,released"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name" placeholder="Guarantee Reference No. — رقم الضمان"/></h1>
+                    </div>
+
+                    <!-- Alert banner for expiry -->
+                    <div class="alert alert-danger" role="alert"
+                         invisible="alert_level != 'expired' or state != 'active'">
+                        ⚠️ This guarantee has EXPIRED — انتهت صلاحية هذا الضمان
+                    </div>
+                    <div class="alert alert-warning" role="alert"
+                         invisible="alert_level != 'critical' or state != 'active'">
+                        ⚠️ This guarantee expires in less than 14 days — ينتهي الضمان خلال أقل من 14 يوماً
+                    </div>
+
+                    <group>
+                        <group string="Guarantee Details — تفاصيل الضمان">
+                            <field name="guarantee_type"/>
+                            <field name="contract_id"/>
+                            <field name="partner_id" readonly="1"/>
+                            <field name="beneficiary"/>
+                        </group>
+                        <group string="Bank Details — تفاصيل البنك">
+                            <field name="bank_name"/>
+                            <field name="bank_reference"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Financial — المالي">
+                            <field name="currency_id" invisible="1"/>
+                            <field name="amount"/>
+                        </group>
+                        <group string="Validity — الصلاحية">
+                            <field name="issue_date"/>
+                            <field name="expiry_date"/>
+                            <field name="days_to_expiry" readonly="1"/>
+                            <field name="extended_expiry_date" invisible="state != 'extended'"/>
+                        </group>
+                    </group>
+
+                    <group string="Release / Claim — الإفراج / المطالبة"
+                           invisible="state not in ('released','claimed')">
+                        <group>
+                            <field name="release_date"  invisible="state != 'released'"/>
+                            <field name="claim_date"    invisible="state != 'claimed'"/>
+                            <field name="claim_amount"  invisible="state != 'claimed'"/>
+                        </group>
+                        <group>
+                            <field name="claim_reason"  invisible="state != 'claimed'"/>
+                        </group>
+                    </group>
+
+                    <group string="Notes — ملاحظات">
+                        <field name="notes" nolabel="1" placeholder="Notes — ملاحظات"/>
+                    </group>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- ── List ─────────────────────────────────────────────────────────────── -->
+    <record id="view_contract_guarantee_list" model="ir.ui.view">
+        <field name="name">contract.guarantee.list</field>
+        <field name="model">contract.guarantee</field>
+        <field name="arch" type="xml">
+            <list string="Bank Guarantees — الضمانات البنكية"
+                  decoration-success="state == 'active' and alert_level == 'ok'"
+                  decoration-warning="state == 'active' and alert_level == 'warning'"
+                  decoration-danger="state == 'active' and alert_level in ('critical','expired')"
+                  decoration-muted="state in ('released','claimed','expired')">
+                <field name="name"/>
+                <field name="contract_id"/>
+                <field name="guarantee_type"/>
+                <field name="bank_name"/>
+                <field name="amount"/>
+                <field name="currency_id" column_invisible="1"/>
+                <field name="issue_date"/>
+                <field name="expiry_date"/>
+                <field name="days_to_expiry"/>
+                <field name="alert_level" column_invisible="1"/>
+                <field name="partner_id"/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'active'"
+                       decoration-warning="state == 'extended'"
+                       decoration-muted="state in ('released','expired')"
+                       decoration-danger="state == 'claimed'"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ── Search ───────────────────────────────────────────────────────────── -->
+    <record id="view_contract_guarantee_search" model="ir.ui.view">
+        <field name="name">contract.guarantee.search</field>
+        <field name="model">contract.guarantee</field>
+        <field name="arch" type="xml">
+            <search string="Search Guarantees — البحث في الضمانات">
+                <field name="name"/>
+                <field name="contract_id"/>
+                <field name="bank_name"/>
+                <separator/>
+                <filter string="Active — سارٍ"         name="active"    domain="[('state','=','active')]"/>
+                <filter string="Extended — مجدَّد"     name="extended"  domain="[('state','=','extended')]"/>
+                <filter string="Released — مُفرج عنه"  name="released"  domain="[('state','=','released')]"/>
+                <filter string="Claimed — مطالَب به"   name="claimed"   domain="[('state','=','claimed')]"/>
+                <separator/>
+                <filter string="Expiring in 30 days — تنتهي خلال 30 يوماً"
+                        name="expiring_soon"
+                        domain="[('state','=','active'),('expiry_date','&lt;=',(context_today() + relativedelta(days=30)).strftime('%Y-%m-%d')),('expiry_date','&gt;=',context_today().strftime('%Y-%m-%d'))]"/>
+                <separator/>
+                <filter string="Performance Bond — ضمان التنفيذ"
+                        name="performance" domain="[('guarantee_type','=','performance')]"/>
+                <filter string="Advance Guarantee — ضمان الدفعة المقدمة"
+                        name="advance" domain="[('guarantee_type','=','advance')]"/>
+                <group name="group_by">
+                    <filter string="Contract" name="by_contract" context="{'group_by': 'contract_id'}"/>
+                    <filter string="Type"     name="by_type"     context="{'group_by': 'guarantee_type'}"/>
+                    <filter string="Bank"     name="by_bank"     context="{'group_by': 'bank_name'}"/>
+                    <filter string="Status"   name="by_state"    context="{'group_by': 'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- ── Action ───────────────────────────────────────────────────────────── -->
+    <record id="action_contract_guarantee" model="ir.actions.act_window">
+        <field name="name">Bank Guarantees — الضمانات البنكية</field>
+        <field name="res_model">contract.guarantee</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_contract_guarantee_search"/>
+        <field name="context">{'search_default_active': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No guarantees registered — لا توجد ضمانات مسجلة
+            </p>
+        </field>
+    </record>
+
+</odoo>
