@@ -29,7 +29,7 @@ Abdulkaraim Osman — Tech Manager | Backend Engineer | DevOps Engineer
 Bab International Corp For Specialized Services
 LinkedIn : https://www.linkedin.com/in/abdulkaraim-o-385b7a110/
     """,
-    'author': 'LeapAI / Abdulkaraim Osman — Bab International Corp',
+    'author': 'leapai.ai / Abdulkaraim Osman — Bab International Corp',
     'website': 'https://leapai.ai/',
     'support': 'sales@leapai.ai',
     'license': 'LGPL-3',
