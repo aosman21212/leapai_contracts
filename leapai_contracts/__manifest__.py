@@ -18,12 +18,20 @@ Complete contract lifecycle management for Saudi Arabia:
 
 Contact
 -------
-Email   : abdzoro89@gmail.com | a.osman@bab.com.sa
-Website : https://leapai.ai/
+Location : King Abdulaziz Branch Road, Riyadh, Saudi Arabia
+Email    : sales@leapai.ai
+Phone    : +966 53 553 3627
+Website  : https://leapai.ai/
+
+Developer
+---------
+Abdulkaraim Osman — Tech Manager | Backend Engineer | DevOps Engineer
+Bab International Corp For Specialized Services
+LinkedIn : https://www.linkedin.com/in/abdulkaraim-o-385b7a110/
     """,
-    'author': 'LeapAI',
+    'author': 'LeapAI / Abdulkaraim Osman — Bab International Corp',
     'website': 'https://leapai.ai/',
-    'support': 'a.osman@bab.com.sa',
+    'support': 'sales@leapai.ai',
     'license': 'LGPL-3',
     'application': True,
     'depends': ['mail', 'account'],
