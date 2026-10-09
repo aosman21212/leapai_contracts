@@ -1,4 +1,15 @@
 # -*- coding: utf-8 -*-
+# =============================================================================
+#  LeapAI Unified Contracts System
+# -----------------------------------------------------------------------------
+#  Location  : King Abdulaziz Branch Road, Riyadh, Saudi Arabia
+#  Email     : sales@leapai.ai
+#  Phone     : +966 53 553 3627
+#  Website   : https://leapai.ai
+#  Developer : Abdulkaraim Osman — Tech Manager | Backend Engineer | DevOps Engineer
+#              at Bab International Corp For Specialized Services
+#  LinkedIn  : https://www.linkedin.com/in/abdulkaraim-o-385b7a110/
+# =============================================================================
 {
     'name': 'LeapAI Unified Contracts System',
     'version': '19.0.1.0.0',
@@ -30,8 +41,9 @@ Bab International Corp For Specialized Services
 LinkedIn : https://www.linkedin.com/in/abdulkaraim-o-385b7a110/
     """,
     'author': 'leapai.ai / Abdulkaraim Osman — Bab International Corp',
-    'website': 'https://leapai.ai/',
+    'maintainer': 'Abdulkaraim Osman',
     'support': 'sales@leapai.ai',
+    'website': 'https://leapai.ai/',
     'license': 'LGPL-3',
     'application': True,
     'depends': ['mail', 'account'],
